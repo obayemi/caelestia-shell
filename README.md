@@ -301,6 +301,30 @@ default, you must create it manually.
             ],
             "criticalLevel": 3
         },
+        "memory": {
+            "reminderInterval": 5,
+            "warnLevels": [
+                {
+                    "level": 60,
+                    "title": "Memory usage elevated",
+                    "message": "Memory usage is above 60%",
+                    "icon": "memory"
+                },
+                {
+                    "level": 80,
+                    "title": "Memory usage high",
+                    "message": "Memory usage is above 80%",
+                    "icon": "memory"
+                },
+                {
+                    "level": 90,
+                    "title": "Critical memory usage",
+                    "message": "Memory usage is above 90%! Close some applications",
+                    "icon": "memory",
+                    "critical": true
+                }
+            ]
+        },
         "idle": {
             "lockBeforeSleep": true,
             "inhibitWhenAudio": true,
@@ -406,6 +430,8 @@ default, you must create it manually.
         },
         "showOnHover": true,
         "status": {
+            "showCpu": false,
+            "showMemory": false,
             "showAudio": false,
             "showBattery": true,
             "showBluetooth": true,
@@ -618,8 +644,7 @@ default, you must create it manually.
         "gpuType": "",
         "playerAliases": [{ "from": "com.github.th_ch.youtube_music", "to": "YT Music" }],
         "weatherLocation": "",
-        "useFahrenheit": false,
-        "useFahrenheitPerformance": false,
+        "temperatureUnit": "celsius",
         "useTwelveHourClock": false,
         "smartScheme": true,
         "visualiserBars": 45
@@ -660,6 +685,7 @@ default, you must create it manually.
             "kbLimit": true,
             "numLockChanged": true,
             "vpnChanged": true,
+            "memoryWarning": true,
             "nowPlaying": false
         },
         "vpn": {

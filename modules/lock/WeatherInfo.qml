@@ -157,7 +157,7 @@ ColumnLayout {
 
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
-                        text: Config.services.useFahrenheit ? `${forecastHour.modelData?.tempF ?? 0}°F` : `${forecastHour.modelData?.tempC ?? 0}°C`
+                        text: Config.services.temperatureUnit === "fahrenheit" ? `${forecastHour.modelData?.tempF ?? 0}°F` : `${forecastHour.modelData?.tempC ?? 0}°C`
                         color: Colours.palette.m3secondary
                         font.pointSize: Appearance.font.size.larger
                     }

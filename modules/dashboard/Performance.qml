@@ -13,7 +13,8 @@ Item {
     readonly property int minWidth: 400 + 400 + Appearance.spacing.normal + 120 + Appearance.padding.large * 2
 
     function displayTemp(temp: real): string {
-        return `${Math.ceil(Config.services.useFahrenheitPerformance ? temp * 1.8 + 32 : temp)}°${Config.services.useFahrenheitPerformance ? "F" : "C"}`;
+        const useFahrenheit = Config.services.temperatureUnit === "fahrenheit";
+        return `${Math.ceil(useFahrenheit ? temp * 1.8 + 32 : temp)}°${useFahrenheit ? "F" : "C"}`;
     }
 
     implicitWidth: Math.max(minWidth, content.implicitWidth)

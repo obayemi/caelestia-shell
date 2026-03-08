@@ -150,6 +150,10 @@ Singleton {
                 inhibitWhenAudio: general.idle.inhibitWhenAudio,
                 timeouts: general.idle.timeouts
             },
+            memory: {
+                reminderInterval: general.memory.reminderInterval,
+                warnLevels: general.memory.warnLevels
+            },
             battery: {
                 warnLevels: general.battery.warnLevels,
                 criticalLevel: general.battery.criticalLevel
@@ -228,6 +232,8 @@ Singleton {
                 iconSubs: bar.tray.iconSubs
             },
             status: {
+                showCpu: bar.status.showCpu,
+                showMemory: bar.status.showMemory,
                 showAudio: bar.status.showAudio,
                 showMicrophone: bar.status.showMicrophone,
                 showKbLayout: bar.status.showKbLayout,
@@ -423,6 +429,7 @@ Singleton {
                 numLockChanged: utilities.toasts.numLockChanged,
                 kbLayoutChanged: utilities.toasts.kbLayoutChanged,
                 vpnChanged: utilities.toasts.vpnChanged,
+                memoryWarning: utilities.toasts.memoryWarning,
                 nowPlaying: utilities.toasts.nowPlaying
             },
             vpn: {
@@ -445,8 +452,7 @@ Singleton {
     function serializeServices(): var {
         return {
             weatherLocation: services.weatherLocation,
-            useFahrenheit: services.useFahrenheit,
-            useFahrenheitPerformance: services.useFahrenheitPerformance,
+            temperatureUnit: services.temperatureUnit,
             useTwelveHourClock: services.useTwelveHourClock,
             gpuType: services.gpuType,
             visualiserBars: services.visualiserBars,
