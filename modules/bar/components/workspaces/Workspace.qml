@@ -9,16 +9,15 @@ import QtQuick.Layouts
 ColumnLayout {
     id: root
 
-    required property int index
+    required property int modelData
     required property int activeWsId
     required property var occupied
-    required property int groupOffset
 
     readonly property bool isWorkspace: true // Flag for finding workspace children
     // Unanimated prop for others to use as reference
     readonly property int size: implicitHeight + (hasWindows ? Appearance.padding.small : 0)
 
-    readonly property int ws: groupOffset + index + 1
+    readonly property int ws: modelData
     readonly property bool isOccupied: occupied[ws] ?? false
     readonly property bool hasWindows: isOccupied && Config.bar.workspaces.showWindows
 
@@ -35,6 +34,8 @@ ColumnLayout {
 
         animate: true
         text: {
+            if (Config.bar.workspaces.showId)
+                return root.ws.toString();
             const ws = Hypr.workspaces.values.find(w => w.id === root.ws);
             const wsName = !ws || ws.name == root.ws ? root.ws : ws.name[0];
             let displayName = wsName.toString();

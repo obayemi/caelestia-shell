@@ -161,6 +161,9 @@ Singleton {
         return {
             enabled: background.enabled,
             wallpaperEnabled: background.wallpaperEnabled,
+            randomOnStart: background.randomOnStart,
+            randomPerScreen: background.randomPerScreen,
+            randomPool: background.randomPool,
             desktopClock: {
                 enabled: background.desktopClock.enabled,
                 scale: background.desktopClock.scale,
@@ -204,12 +207,14 @@ Singleton {
             },
             workspaces: {
                 shown: bar.workspaces.shown,
+                dynamic: bar.workspaces.dynamic,
+                showId: bar.workspaces.showId,
+                perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces,
                 activeIndicator: bar.workspaces.activeIndicator,
                 occupiedBg: bar.workspaces.occupiedBg,
                 showWindows: bar.workspaces.showWindows,
                 showWindowsOnSpecialWorkspaces: bar.workspaces.showWindowsOnSpecialWorkspaces,
                 activeTrail: bar.workspaces.activeTrail,
-                perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces,
                 label: bar.workspaces.label,
                 occupiedLabel: bar.workspaces.occupiedLabel,
                 activeLabel: bar.workspaces.activeLabel,

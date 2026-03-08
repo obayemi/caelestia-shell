@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd:*)",
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "Bash(qmlformat:*)",
+      "Bash(qmllint:*)",
+      "Bash(jj status:*)",
+      "Bash(jj log:*)",
+      "Bash(jj describe:*)",
+      "Bash(jj new:*)"
+    ]
+  }
+}

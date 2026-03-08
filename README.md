@@ -178,6 +178,11 @@ target wallpaper
   function set(path: string): void
   function get(): string
   function list(): string
+  function randomize(): string
+  function getPool(): string
+  function addToPool(path: string): string
+  function removeFromPool(path: string): string
+  function clearPool(): string
 ```
 
 ### PFP/Wallpapers
@@ -189,7 +194,19 @@ The wallpapers for the wallpaper switcher are read from `~/Pictures/Wallpapers`
 by default. To change it, change the wallpapers path in `~/.config/caelestia/shell.json`.
 
 To set the wallpaper, you can use the command `caelestia wallpaper`. Use `caelestia wallpaper -h` for more info about
-the command.
+the command. To pick a new random wallpaper, use `caelestia ipc wallpaper randomize`.
+
+You can restrict which wallpapers are eligible for random selection by adding them to the random pool.
+Use the bookmark icon on each wallpaper tile in the control center, or manage the pool via IPC:
+
+```sh
+caelestia shell wallpaper addToPool /path/to/wallpaper.png
+caelestia shell wallpaper removeFromPool /path/to/wallpaper.png
+caelestia shell wallpaper getPool
+caelestia shell wallpaper clearPool
+```
+
+When the pool is non-empty, `randomize` picks only from pool entries. When empty, it picks from all wallpapers.
 
 ## Updating
 
@@ -305,6 +322,9 @@ default, you must create it manually.
         }
     },
     "background": {
+        "randomOnStart": false,
+        "randomPerScreen": false,
+        "randomPool": [],
         "desktopClock": {
             "enabled": false,
             "scale": 1.0,
@@ -408,6 +428,8 @@ default, you must create it manually.
             "label": "  ",
             "occupiedBg": false,
             "occupiedLabel": "󰮯",
+            "dynamic": true,
+            "showId": true,
             "perMonitorWorkspaces": true,
             "showWindows": true,
             "shown": 5,

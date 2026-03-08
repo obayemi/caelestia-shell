@@ -49,6 +49,9 @@ Item {
     property bool desktopClockInvertColors: Config.background.desktopClock.invertColors ?? false
     property bool backgroundEnabled: Config.background.enabled ?? true
     property bool wallpaperEnabled: Config.background.wallpaperEnabled ?? true
+    property bool randomOnStart: Config.background.randomOnStart ?? false
+    property bool randomPerScreen: Config.background.randomPerScreen ?? false
+    property string wallpaperDir: Config.paths.wallpaperDir ?? `${Paths.pictures}/Wallpapers`
     property bool visualiserEnabled: Config.background.visualiser.enabled ?? false
     property bool visualiserAutoHide: Config.background.visualiser.autoHide ?? true
     property real visualiserRounding: Config.background.visualiser.rounding ?? 1
@@ -85,6 +88,9 @@ Item {
         Config.background.desktopClock.invertColors = root.desktopClockInvertColors;
 
         Config.background.wallpaperEnabled = root.wallpaperEnabled;
+        Config.background.randomOnStart = root.randomOnStart;
+        Config.background.randomPerScreen = root.randomPerScreen;
+        Config.paths.wallpaperDir = root.wallpaperDir;
 
         Config.background.visualiser.enabled = root.visualiserEnabled;
         Config.background.visualiser.autoHide = root.visualiserAutoHide;

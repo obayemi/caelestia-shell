@@ -11,31 +11,33 @@ Item {
 
     required property Repeater workspaces
     required property var occupied
-    required property int groupOffset
+    required property var workspaceIds
 
     property list<var> pills: []
 
-    onOccupiedChanged: {
-        if (!occupied)
+    onOccupiedChanged: updatePills()
+    onWorkspaceIdsChanged: updatePills()
+
+    function updatePills(): void {
+        if (!occupied || !workspaceIds)
             return;
         let count = 0;
-        const start = groupOffset;
-        const end = start + Config.bar.workspaces.shown;
-        for (const [ws, occ] of Object.entries(occupied)) {
-            if (ws > start && ws <= end && occ) {
-                const isFirstInGroup = Number(ws) === start + 1;
-                const isLastInGroup = Number(ws) === end;
-                if (isFirstInGroup || !occupied[ws - 1]) {
+        for (let i = 0; i < workspaceIds.length; i++) {
+            const wsId = workspaceIds[i];
+            if (occupied[wsId]) {
+                const isFirst = i === 0 || !occupied[workspaceIds[i - 1]];
+                const isLast = i === workspaceIds.length - 1 || !occupied[workspaceIds[i + 1]];
+                if (isFirst) {
                     if (pills[count])
-                        pills[count].start = ws;
+                        pills[count].startIdx = i;
                     else
                         pills.push(pillComp.createObject(root, {
-                            start: ws
+                            startIdx: i
                         }));
                     count++;
                 }
-                if ((isLastInGroup || !occupied[ws + 1]) && pills[count - 1])
-                    pills[count - 1].end = ws;
+                if (isLast && pills[count - 1])
+                    pills[count - 1].endIdx = i;
             }
         }
         if (pills.length > count)
@@ -52,15 +54,8 @@ Item {
 
             required property var modelData
 
-            readonly property Workspace start: root.workspaces.count > 0 ? root.workspaces.itemAt(getWsIdx(modelData.start)) ?? null : null
-            readonly property Workspace end: root.workspaces.count > 0 ? root.workspaces.itemAt(getWsIdx(modelData.end)) ?? null : null
-
-            function getWsIdx(ws: int): int {
-                let i = ws - 1;
-                while (i < 0)
-                    i += Config.bar.workspaces.shown;
-                return i % Config.bar.workspaces.shown;
-            }
+            readonly property Workspace start: root.workspaces.count > 0 ? root.workspaces.itemAt(modelData.startIdx) ?? null : null
+            readonly property Workspace end: root.workspaces.count > 0 ? root.workspaces.itemAt(modelData.endIdx) ?? null : null
 
             anchors.horizontalCenter: root.horizontalCenter
 
@@ -91,8 +86,8 @@ Item {
     }
 
     component Pill: QtObject {
-        property int start
-        property int end
+        property int startIdx
+        property int endIdx
     }
 
     Component {

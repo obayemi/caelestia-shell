@@ -6,12 +6,14 @@ import qs.components.filedialog
 import qs.services
 import qs.config
 import qs.utils
+import Quickshell
 import QtQuick
 
 Item {
     id: root
 
-    property string source: Wallpapers.current
+    property ShellScreen screen
+    property string source: Wallpapers.showPreview ? Wallpapers.previewPath : (Wallpapers.perScreenPaths[screen?.name] || Wallpapers.actualCurrent)
     property Image current: one
 
     onSourceChanged: {
