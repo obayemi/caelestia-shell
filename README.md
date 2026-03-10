@@ -615,7 +615,15 @@ default, you must create it manually.
         "hiddenApps": []
     },
     "lock": {
-        "recolourLogo": false
+        "recolourLogo": false,
+        "enableFprint": true,
+        "maxFprintTries": 3,
+        "showWeather": true,
+        "showFetch": true,
+        "showMedia": true,
+        "showResources": true,
+        "showNotifications": true,
+        "backgroundMode": "blur"
     },
     "notifs": {
         "actionOnClick": false,

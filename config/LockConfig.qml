@@ -4,6 +4,12 @@ JsonObject {
     property bool recolourLogo: false
     property bool enableFprint: true
     property int maxFprintTries: 3
+    property bool showWeather: true
+    property bool showFetch: true
+    property bool showMedia: true
+    property bool showResources: true
+    property bool showNotifications: true
+    property string backgroundMode: "blur"
     property Sizes sizes: Sizes {}
 
     component Sizes: JsonObject {

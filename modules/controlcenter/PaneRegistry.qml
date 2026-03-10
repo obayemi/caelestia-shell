@@ -47,6 +47,12 @@ QtObject {
             readonly property string label: "dashboard"
             readonly property string icon: "dashboard"
             readonly property string component: "dashboard/DashboardPane.qml"
+        },
+        QtObject {
+            readonly property string id: "lockscreen"
+            readonly property string label: "lock screen"
+            readonly property string icon: "lock"
+            readonly property string component: "lockscreen/LockScreenPane.qml"
         }
     ]
 
