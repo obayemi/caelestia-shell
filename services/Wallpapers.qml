@@ -47,11 +47,8 @@ Searcher {
     property bool startupDone: false
     property bool skipNextFileLoad: false
 
-    // Reactive trigger: fires when config AND wallpaper list are both ready
-    readonly property bool shouldRandomize: !startupDone && Config.background.randomOnStart && wallpapers.entries.length > 0
-
-    onShouldRandomizeChanged: {
-        if (shouldRandomize) {
+    function tryStartupRandomize(): void {
+        if (!startupDone && Config.background.randomOnStart && wallpapers.entries.length > 0) {
             startupDone = true;
             randomize();
         }
@@ -192,6 +189,7 @@ Searcher {
         recursive: true
         path: Paths.wallsdir
         filter: FileSystemModel.Images
+        onEntriesChanged: root.tryStartupRandomize()
     }
 
     Process {
