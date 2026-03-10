@@ -44,6 +44,12 @@ Singleton {
                     city = response.city ?? "";
                     timer.restart();
                 }
+            }, () => {
+                // Fallback: derive city from system timezone (e.g. "Europe/Paris" → "Paris")
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const tzCity = tz?.split("/").pop()?.replace(/_/g, " ");
+                if (tzCity)
+                    fetchCoordsFromCity(tzCity);
             });
         }
     }

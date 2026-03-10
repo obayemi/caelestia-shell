@@ -22,6 +22,27 @@ Searcher {
     // Per-screen wallpaper support for random per-screen mode
     property var perScreenPaths: ({})
 
+    // Per-screen color analysis
+    property var perScreenLuminance: ({})
+    property var perScreenDominant: ({})
+
+    function luminanceFor(screenName: string): real {
+        return perScreenLuminance[screenName] ?? Colours.wallLuminance;
+    }
+
+    function dominantFor(screenName: string): color {
+        return perScreenDominant[screenName] ?? Colours.palette.m3primary;
+    }
+
+    function setScreenAnalysis(screenName: string, luminance: real, dominant: color): void {
+        const lum = Object.assign({}, perScreenLuminance);
+        lum[screenName] = luminance;
+        perScreenLuminance = lum;
+        const dom = Object.assign({}, perScreenDominant);
+        dom[screenName] = dominant;
+        perScreenDominant = dom;
+    }
+
     // Startup randomize state
     property bool startupDone: false
     property bool skipNextFileLoad: false

@@ -6,6 +6,7 @@ import qs.components.filedialog
 import qs.services
 import qs.config
 import qs.utils
+import Caelestia
 import Quickshell
 import QtQuick
 
@@ -15,6 +16,14 @@ Item {
     property ShellScreen screen
     property string source: Wallpapers.showPreview ? Wallpapers.previewPath : (Wallpapers.perScreenPaths[screen?.name] || Wallpapers.actualCurrent)
     property Image current: one
+
+    ImageAnalyser {
+        id: screenAnalyser
+
+        source: root.source
+        onLuminanceChanged: Wallpapers.setScreenAnalysis(root.screen?.name ?? "", luminance, dominantColour)
+        onDominantColourChanged: Wallpapers.setScreenAnalysis(root.screen?.name ?? "", luminance, dominantColour)
+    }
 
     onSourceChanged: {
         if (!source)

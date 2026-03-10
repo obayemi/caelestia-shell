@@ -103,6 +103,16 @@ Item {
         }
 
         Popout {
+            name: "cpu"
+            sourceComponent: Cpu {}
+        }
+
+        Popout {
+            name: "memory"
+            sourceComponent: Memory {}
+        }
+
+        Popout {
             name: "battery"
             sourceComponent: Battery {}
         }

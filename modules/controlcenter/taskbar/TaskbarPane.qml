@@ -23,6 +23,8 @@ Item {
     property bool persistent: Config.bar.persistent ?? true
     property bool showOnHover: Config.bar.showOnHover ?? true
     property int dragThreshold: Config.bar.dragThreshold ?? 20
+    property bool showCpu: Config.bar.status.showCpu ?? false
+    property bool showMemory: Config.bar.status.showMemory ?? false
     property bool showAudio: Config.bar.status.showAudio ?? true
     property bool showMicrophone: Config.bar.status.showMicrophone ?? true
     property bool showKbLayout: Config.bar.status.showKbLayout ?? false
@@ -68,6 +70,8 @@ Item {
         Config.bar.persistent = root.persistent;
         Config.bar.showOnHover = root.showOnHover;
         Config.bar.dragThreshold = root.dragThreshold;
+        Config.bar.status.showCpu = root.showCpu;
+        Config.bar.status.showMemory = root.showMemory;
         Config.bar.status.showAudio = root.showAudio;
         Config.bar.status.showMicrophone = root.showMicrophone;
         Config.bar.status.showKbLayout = root.showKbLayout;
@@ -184,6 +188,22 @@ Item {
                         rootItem: root
 
                         options: [
+                            {
+                                label: qsTr("CPU"),
+                                propertyName: "showCpu",
+                                onToggled: function (checked) {
+                                    root.showCpu = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Memory"),
+                                propertyName: "showMemory",
+                                onToggled: function (checked) {
+                                    root.showMemory = checked;
+                                    root.saveConfig();
+                                }
+                            },
                             {
                                 label: qsTr("Speakers"),
                                 propertyName: "showAudio",

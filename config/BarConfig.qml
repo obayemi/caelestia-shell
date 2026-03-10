@@ -95,6 +95,8 @@ JsonObject {
     }
 
     component Status: JsonObject {
+        property bool showCpu: false
+        property bool showMemory: false
         property bool showAudio: false
         property bool showMicrophone: false
         property bool showKbLayout: false

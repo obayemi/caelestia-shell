@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
+import qs.components.misc
 import qs.services
 import qs.utils
 import qs.config
@@ -22,6 +23,13 @@ StyledRect {
     clip: true
     implicitWidth: Config.bar.sizes.innerWidth
     implicitHeight: iconColumn.implicitHeight + Appearance.padding.normal * 2 - (Config.bar.status.showLockStatus && !Hypr.capsLock && !Hypr.numLock ? iconColumn.spacing : 0)
+
+    Loader {
+        active: Config.bar.status.showCpu || Config.bar.status.showMemory
+        sourceComponent: Ref {
+            service: SystemUsage
+        }
+    }
 
     ColumnLayout {
         id: iconColumn
@@ -227,6 +235,53 @@ StyledRect {
 
             Behavior on Layout.preferredHeight {
                 Anim {}
+            }
+        }
+
+        // CPU icon
+        WrappedLoader {
+            name: "cpu"
+            active: Config.bar.status.showCpu
+
+            sourceComponent: MaterialIcon {
+                animate: true
+                text: "speed"
+                fill: SystemUsage.cpuPerc >= 0.6 ? 1 : 0
+                color: SystemUsage.cpuPerc >= 0.85 ? Colours.palette.m3error : root.colour
+            }
+        }
+
+        // Memory icon
+        WrappedLoader {
+            name: "memory"
+            active: Config.bar.status.showMemory
+
+            sourceComponent: MaterialIcon {
+                id: memIcon
+
+                animate: true
+                text: "memory"
+                fill: SystemUsage.memPerc >= 0.6 ? 1 : 0
+                color: SystemUsage.memPerc >= 0.9 ? Colours.palette.m3error : SystemUsage.memPerc >= 0.8 ? Colours.palette.m3tertiary : root.colour
+
+                SequentialAnimation on opacity {
+                    running: SystemUsage.memPerc >= 0.9
+                    alwaysRunToEnd: true
+                    loops: Animation.Infinite
+
+                    Anim {
+                        from: 1
+                        to: 0.3
+                        duration: Appearance.anim.durations.large
+                        easing.bezierCurve: Appearance.anim.curves.standardAccel
+                    }
+                    Anim {
+                        from: 0.3
+                        to: 1
+                        duration: Appearance.anim.durations.large
+                        easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    }
+                }
             }
         }
 
