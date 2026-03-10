@@ -183,11 +183,19 @@ Searcher {
         }
     }
 
+    property bool _scanReady: false
+
+    Timer {
+        interval: 0
+        running: true
+        onTriggered: root._scanReady = true
+    }
+
     FileSystemModel {
         id: wallpapers
 
         recursive: true
-        path: Paths.wallsdir
+        path: root._scanReady ? Paths.wallsdir : ""
         filter: FileSystemModel.Images
         onEntriesChanged: root.tryStartupRandomize()
     }
