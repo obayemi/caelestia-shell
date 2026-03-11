@@ -89,7 +89,8 @@ StyledRect {
                 return;
 
             if (Config.notifs.focusOnClick) {
-                Hypr.dispatch(`focuswindow class:${root.modelData.appName}`);
+                const cls = root.modelData.desktopEntry || root.modelData.appName;
+                Hypr.dispatch(`focuswindow class:(?i)${cls}`);
                 root.modelData.popup = false;
             }
 

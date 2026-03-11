@@ -123,7 +123,8 @@ Item {
             }
             onClicked: event => {
                 if (event.button === Qt.LeftButton && Config.notifs.focusOnClick) {
-                    Hypr.dispatch(`focuswindow class:${modelData.appName}`);
+                    const cls = modelData.desktopEntry || modelData.appName;
+                    Hypr.dispatch(`focuswindow class:(?i)${cls}`);
                     root.visibilities.sidebar = false;
                 }
             }
