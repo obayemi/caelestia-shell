@@ -8,6 +8,8 @@ JsonObject {
     property bool actionOnClick: false
     property int groupPreviewNum: 3
     property bool openExpanded: false // Show the notifichation in expanded state when opening
+    property bool focusOnClick: false // Click notification to focus the source app window
+    property bool expandOnHover: false // Expand notification on mouse hover
     property Sizes sizes: Sizes {}
 
     component Sizes: JsonObject {

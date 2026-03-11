@@ -631,6 +631,8 @@ default, you must create it manually.
         "defaultExpireTimeout": 5000,
         "expandThreshold": 20,
         "openExpanded": false,
+        "focusOnClick": false,
+        "expandOnHover": false,
         "expire": false
     },
     "osd": {

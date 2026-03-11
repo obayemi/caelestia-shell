@@ -47,10 +47,16 @@ StyledRect {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         preventStealing: true
 
-        onEntered: root.modelData.timer.stop()
+        onEntered: {
+            root.modelData.timer.stop();
+            if (Config.notifs.expandOnHover)
+                root.expanded = true;
+        }
         onExited: {
             if (!pressed)
                 root.modelData.timer.start();
+            if (Config.notifs.expandOnHover)
+                root.expanded = Config.notifs.openExpanded;
         }
 
         drag.target: parent
@@ -79,12 +85,19 @@ StyledRect {
             }
         }
         onClicked: event => {
-            if (!Config.notifs.actionOnClick || event.button !== Qt.LeftButton)
+            if (event.button !== Qt.LeftButton)
                 return;
 
-            const actions = root.modelData.actions;
-            if (actions?.length === 1)
-                actions[0].invoke();
+            if (Config.notifs.focusOnClick) {
+                Hypr.dispatch(`focuswindow class:${root.modelData.appName}`);
+                root.modelData.popup = false;
+            }
+
+            if (Config.notifs.actionOnClick) {
+                const actions = root.modelData.actions;
+                if (actions?.length === 1)
+                    actions[0].invoke();
+            }
         }
 
         Item {
