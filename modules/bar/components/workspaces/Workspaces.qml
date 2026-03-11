@@ -29,7 +29,7 @@ StyledClippingRect {
 
     readonly property var workspaceIds: {
         if (Config.bar.workspaces.dynamic) {
-            return Hypr.workspaces.values.filter(w => !w.name.startsWith("special:") && (!root.perMonitor || w.monitor === root.monitor)).sort((a, b) => a.id - b.id).map(w => w.id);
+            return Hypr.workspaces.values.filter(w => !w.name.startsWith("special:") && (!root.perMonitor || !root.monitor || w.monitor === root.monitor)).sort((a, b) => a.id - b.id).map(w => w.id);
         } else {
             const ids = [];
             for (let i = 0; i < Config.bar.workspaces.shown; i++)
@@ -106,8 +106,11 @@ StyledClippingRect {
         MouseArea {
             anchors.fill: layout
             onClicked: event => {
-                const ws = layout.childAt(event.x, event.y).ws;
-                if (Hypr.activeWsId !== ws)
+                const child = layout.childAt(event.x, event.y);
+                if (!child)
+                    return;
+                const ws = child.ws;
+                if (root.activeWsId !== ws)
                     Hypr.dispatch(`workspace ${ws}`);
                 else
                     Hypr.dispatch("togglespecialworkspace special");
