@@ -346,7 +346,7 @@ default, you must create it manually.
         }
     },
     "background": {
-        "randomOnStart": false,
+        "random": false,
         "randomPerScreen": false,
         "randomPool": [],
         "desktopClock": {

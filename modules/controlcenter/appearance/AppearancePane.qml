@@ -49,7 +49,7 @@ Item {
     property bool desktopClockInvertColors: Config.background.desktopClock.invertColors ?? false
     property bool backgroundEnabled: Config.background.enabled ?? true
     property bool wallpaperEnabled: Config.background.wallpaperEnabled ?? true
-    property bool randomOnStart: Config.background.randomOnStart ?? false
+    property bool random: Config.background.random ?? false
     property bool randomPerScreen: Config.background.randomPerScreen ?? false
     property string wallpaperDir: Config.paths.wallpaperDir ?? `${Paths.pictures}/Wallpapers`
     property bool visualiserEnabled: Config.background.visualiser.enabled ?? false
@@ -88,7 +88,7 @@ Item {
         Config.background.desktopClock.invertColors = root.desktopClockInvertColors;
 
         Config.background.wallpaperEnabled = root.wallpaperEnabled;
-        Config.background.randomOnStart = root.randomOnStart;
+        Config.background.random = root.random;
         Config.background.randomPerScreen = root.randomPerScreen;
         Config.paths.wallpaperDir = root.wallpaperDir;
 

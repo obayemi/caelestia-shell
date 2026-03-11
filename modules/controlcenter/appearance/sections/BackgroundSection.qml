@@ -83,10 +83,10 @@ CollapsibleSection {
         }
 
         SwitchRow {
-            label: qsTr("Random on start")
-            checked: rootPane.randomOnStart
+            label: qsTr("Random wallpaper")
+            checked: rootPane.random
             onToggled: checked => {
-                rootPane.randomOnStart = checked;
+                rootPane.random = checked;
                 rootPane.saveConfig();
             }
         }

@@ -3,7 +3,7 @@ import Quickshell.Io
 JsonObject {
     property bool enabled: true
     property bool wallpaperEnabled: true
-    property bool randomOnStart: false // Pick random wallpaper on startup
+    property bool random: false // Pick random wallpaper on startup and hot-plug
     property bool randomPerScreen: false // Different random wallpaper per monitor
     property list<string> randomPool: [] // Wallpaper paths eligible for random selection
     property DesktopClock desktopClock: DesktopClock {}

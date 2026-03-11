@@ -165,7 +165,7 @@ Singleton {
         return {
             enabled: background.enabled,
             wallpaperEnabled: background.wallpaperEnabled,
-            randomOnStart: background.randomOnStart,
+            random: background.random,
             randomPerScreen: background.randomPerScreen,
             randomPool: background.randomPool,
             desktopClock: {
@@ -403,6 +403,12 @@ Singleton {
             recolourLogo: lock.recolourLogo,
             enableFprint: lock.enableFprint,
             maxFprintTries: lock.maxFprintTries,
+            showWeather: lock.showWeather,
+            showFetch: lock.showFetch,
+            showMedia: lock.showMedia,
+            showResources: lock.showResources,
+            showNotifications: lock.showNotifications,
+            backgroundMode: lock.backgroundMode,
             sizes: {
                 heightMult: lock.sizes.heightMult,
                 ratio: lock.sizes.ratio,
