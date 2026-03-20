@@ -13,9 +13,16 @@ Scope {
 
         signal unlock
 
-        LockSurface {
-            lock: lock
-            pam: pam
+        Variants {
+            model: Quickshell.screens
+
+            LockSurface {
+                required property ShellScreen modelData
+
+                screen: modelData
+                lock: lock
+                pam: pam
+            }
         }
     }
 
