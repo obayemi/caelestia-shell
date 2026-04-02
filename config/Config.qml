@@ -150,6 +150,10 @@ Singleton {
                 inhibitWhenAudio: general.idle.inhibitWhenAudio,
                 timeouts: general.idle.timeouts
             },
+            memory: {
+                reminderInterval: general.memory.reminderInterval,
+                warnLevels: general.memory.warnLevels
+            },
             battery: {
                 warnLevels: general.battery.warnLevels,
                 criticalLevel: general.battery.criticalLevel
@@ -161,6 +165,9 @@ Singleton {
         return {
             enabled: background.enabled,
             wallpaperEnabled: background.wallpaperEnabled,
+            random: background.random,
+            randomPerScreen: background.randomPerScreen,
+            randomPool: background.randomPool,
             desktopClock: {
                 enabled: background.desktopClock.enabled,
                 scale: background.desktopClock.scale,
@@ -204,12 +211,14 @@ Singleton {
             },
             workspaces: {
                 shown: bar.workspaces.shown,
+                dynamic: bar.workspaces.dynamic,
+                showId: bar.workspaces.showId,
+                perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces,
                 activeIndicator: bar.workspaces.activeIndicator,
                 occupiedBg: bar.workspaces.occupiedBg,
                 showWindows: bar.workspaces.showWindows,
                 showWindowsOnSpecialWorkspaces: bar.workspaces.showWindowsOnSpecialWorkspaces,
                 activeTrail: bar.workspaces.activeTrail,
-                perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces,
                 label: bar.workspaces.label,
                 occupiedLabel: bar.workspaces.occupiedLabel,
                 activeLabel: bar.workspaces.activeLabel,
@@ -223,6 +232,8 @@ Singleton {
                 iconSubs: bar.tray.iconSubs
             },
             status: {
+                showCpu: bar.status.showCpu,
+                showMemory: bar.status.showMemory,
                 showAudio: bar.status.showAudio,
                 showMicrophone: bar.status.showMicrophone,
                 showKbLayout: bar.status.showKbLayout,
@@ -258,7 +269,8 @@ Singleton {
         return {
             enabled: dashboard.enabled,
             showOnHover: dashboard.showOnHover,
-            updateInterval: dashboard.updateInterval,
+            mediaUpdateInterval: dashboard.mediaUpdateInterval,
+            resourceUpdateInterval: dashboard.resourceUpdateInterval,
             dragThreshold: dashboard.dragThreshold,
             performance: {
                 showBattery: dashboard.performance.showBattery,
@@ -333,6 +345,9 @@ Singleton {
             expandThreshold: notifs.expandThreshold,
             actionOnClick: notifs.actionOnClick,
             groupPreviewNum: notifs.groupPreviewNum,
+            openExpanded: notifs.openExpanded,
+            focusOnClick: notifs.focusOnClick,
+            expandOnHover: notifs.expandOnHover,
             sizes: {
                 width: notifs.sizes.width,
                 image: notifs.sizes.image,
@@ -391,6 +406,12 @@ Singleton {
             recolourLogo: lock.recolourLogo,
             enableFprint: lock.enableFprint,
             maxFprintTries: lock.maxFprintTries,
+            showWeather: lock.showWeather,
+            showFetch: lock.showFetch,
+            showMedia: lock.showMedia,
+            showResources: lock.showResources,
+            showNotifications: lock.showNotifications,
+            backgroundMode: lock.backgroundMode,
             sizes: {
                 heightMult: lock.sizes.heightMult,
                 ratio: lock.sizes.ratio,
@@ -418,6 +439,7 @@ Singleton {
                 numLockChanged: utilities.toasts.numLockChanged,
                 kbLayoutChanged: utilities.toasts.kbLayoutChanged,
                 vpnChanged: utilities.toasts.vpnChanged,
+                memoryWarning: utilities.toasts.memoryWarning,
                 nowPlaying: utilities.toasts.nowPlaying
             },
             vpn: {
@@ -440,8 +462,7 @@ Singleton {
     function serializeServices(): var {
         return {
             weatherLocation: services.weatherLocation,
-            useFahrenheit: services.useFahrenheit,
-            useFahrenheitPerformance: services.useFahrenheitPerformance,
+            temperatureUnit: services.temperatureUnit,
             useTwelveHourClock: services.useTwelveHourClock,
             gpuType: services.gpuType,
             visualiserBars: services.visualiserBars,
@@ -478,17 +499,12 @@ Singleton {
             }
         }
         onLoaded: {
-            try {
-                JSON.parse(text());
-                const elapsed = timer.elapsedMs();
-                // Only show toast for external changes (not our own saves) and when elapsed time is meaningful
-                if (adapter.utilities.toasts.configLoaded && !recentlySaved && elapsed > 0) {
-                    Toaster.toast(qsTr("Config loaded"), qsTr("Config loaded in %1ms").arg(elapsed), "rule_settings");
-                } else if (adapter.utilities.toasts.configLoaded && recentlySaved && elapsed > 0) {
-                    Toaster.toast(qsTr("Config saved"), qsTr("Config reloaded in %1ms").arg(elapsed), "rule_settings");
-                }
-            } catch (e) {
-                Toaster.toast(qsTr("Failed to load config"), e.message, "settings_alert", Toast.Error);
+            const elapsed = timer.elapsedMs();
+            // Only show toast for external changes (not our own saves) and when elapsed time is meaningful
+            if (adapter.utilities.toasts.configLoaded && !recentlySaved && elapsed > 0) {
+                Toaster.toast(qsTr("Config loaded"), qsTr("Config loaded in %1ms").arg(elapsed), "rule_settings");
+            } else if (adapter.utilities.toasts.configLoaded && recentlySaved && elapsed > 0) {
+                Toaster.toast(qsTr("Config saved"), qsTr("Config reloaded in %1ms").arg(elapsed), "rule_settings");
             }
         }
         onLoadFailed: err => {

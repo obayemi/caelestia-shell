@@ -4,11 +4,11 @@
   ...
 }:
 pkgs.app2unit.overrideAttrs (final: prev: rec {
-  version = "1.0.3"; # Fix old issue related to missing env var
+  version = "1.3.0";
   src = fetchFromGitHub {
     owner = "Vladimir-csp";
     repo = "app2unit";
     tag = "v${version}";
-    hash = "sha256-7eEVjgs+8k+/NLteSBKgn4gPaPLHC+3Uzlmz6XB0930=";
+    hash = "sha256-HkwcYYGNReDtPxZumnz3ZDb1sr1JcngAOqs/inO/350=";
   };
 })

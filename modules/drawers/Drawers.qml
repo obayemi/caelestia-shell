@@ -35,7 +35,9 @@ Variants {
                     return 0;
 
                 const mon = Hypr.monitorFor(screen);
-                if (mon?.lastIpcObject?.specialWorkspace?.name || mon?.activeWorkspace?.lastIpcObject?.windows > 0)
+                if (!mon?.activeWorkspace)
+                    return 0;
+                if (mon.lastIpcObject?.specialWorkspace?.name || mon.activeWorkspace.lastIpcObject?.windows > 0)
                     return 0;
 
                 const thresholds = [];

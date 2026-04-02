@@ -178,6 +178,11 @@ target wallpaper
   function set(path: string): void
   function get(): string
   function list(): string
+  function randomize(): string
+  function getPool(): string
+  function addToPool(path: string): string
+  function removeFromPool(path: string): string
+  function clearPool(): string
 ```
 
 ### PFP/Wallpapers
@@ -189,7 +194,19 @@ The wallpapers for the wallpaper switcher are read from `~/Pictures/Wallpapers`
 by default. To change it, change the wallpapers path in `~/.config/caelestia/shell.json`.
 
 To set the wallpaper, you can use the command `caelestia wallpaper`. Use `caelestia wallpaper -h` for more info about
-the command.
+the command. To pick a new random wallpaper, use `caelestia ipc wallpaper randomize`.
+
+You can restrict which wallpapers are eligible for random selection by adding them to the random pool.
+Use the bookmark icon on each wallpaper tile in the control center, or manage the pool via IPC:
+
+```sh
+caelestia shell wallpaper addToPool /path/to/wallpaper.png
+caelestia shell wallpaper removeFromPool /path/to/wallpaper.png
+caelestia shell wallpaper getPool
+caelestia shell wallpaper clearPool
+```
+
+When the pool is non-empty, `randomize` picks only from pool entries. When empty, it picks from all wallpapers.
 
 ## Updating
 
@@ -284,6 +301,30 @@ default, you must create it manually.
             ],
             "criticalLevel": 3
         },
+        "memory": {
+            "reminderInterval": 5,
+            "warnLevels": [
+                {
+                    "level": 60,
+                    "title": "Memory usage elevated",
+                    "message": "Memory usage is above 60%",
+                    "icon": "memory"
+                },
+                {
+                    "level": 80,
+                    "title": "Memory usage high",
+                    "message": "Memory usage is above 80%",
+                    "icon": "memory"
+                },
+                {
+                    "level": 90,
+                    "title": "Critical memory usage",
+                    "message": "Memory usage is above 90%! Close some applications",
+                    "icon": "memory",
+                    "critical": true
+                }
+            ]
+        },
         "idle": {
             "lockBeforeSleep": true,
             "inhibitWhenAudio": true,
@@ -305,6 +346,9 @@ default, you must create it manually.
         }
     },
     "background": {
+        "random": false,
+        "randomPerScreen": false,
+        "randomPool": [],
         "desktopClock": {
             "enabled": false,
             "scale": 1.0,
@@ -386,6 +430,8 @@ default, you must create it manually.
         },
         "showOnHover": true,
         "status": {
+            "showCpu": false,
+            "showMemory": false,
             "showAudio": false,
             "showBattery": true,
             "showBluetooth": true,
@@ -408,6 +454,8 @@ default, you must create it manually.
             "label": "  ",
             "occupiedBg": false,
             "occupiedLabel": "󰮯",
+            "dynamic": true,
+            "showId": true,
             "perMonitorWorkspaces": true,
             "showWindows": true,
             "shown": 5,
@@ -567,7 +615,15 @@ default, you must create it manually.
         "hiddenApps": []
     },
     "lock": {
-        "recolourLogo": false
+        "recolourLogo": false,
+        "enableFprint": true,
+        "maxFprintTries": 3,
+        "showWeather": true,
+        "showFetch": true,
+        "showMedia": true,
+        "showResources": true,
+        "showNotifications": true,
+        "backgroundMode": "blur"
     },
     "notifs": {
         "actionOnClick": false,
@@ -575,6 +631,8 @@ default, you must create it manually.
         "defaultExpireTimeout": 5000,
         "expandThreshold": 20,
         "openExpanded": false,
+        "focusOnClick": false,
+        "expandOnHover": false,
         "expire": false
     },
     "osd": {
@@ -596,8 +654,7 @@ default, you must create it manually.
         "gpuType": "",
         "playerAliases": [{ "from": "com.github.th_ch.youtube_music", "to": "YT Music" }],
         "weatherLocation": "",
-        "useFahrenheit": false,
-        "useFahrenheitPerformance": false,
+        "temperatureUnit": "celsius",
         "useTwelveHourClock": false,
         "smartScheme": true,
         "visualiserBars": 45
@@ -638,6 +695,7 @@ default, you must create it manually.
             "kbLimit": true,
             "numLockChanged": true,
             "vpnChanged": true,
+            "memoryWarning": true,
             "nowPlaying": false
         },
         "vpn": {

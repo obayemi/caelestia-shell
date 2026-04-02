@@ -24,6 +24,14 @@ Singleton {
     readonly property Transparency transparency: Transparency {}
     readonly property alias wallLuminance: analyser.luminance
 
+    function wallLuminanceFor(screenName: string): real {
+        return Wallpapers.perScreenLuminance[screenName] ?? wallLuminance;
+    }
+
+    function dominantFor(screenName: string): color {
+        return Wallpapers.perScreenDominant[screenName] ?? palette.m3primary;
+    }
+
     function getLuminance(c: color): real {
         if (c.r == 0 && c.g == 0 && c.b == 0)
             return 0;

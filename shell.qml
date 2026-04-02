@@ -8,9 +8,22 @@ import "modules/background"
 import "modules/areapicker"
 import "modules/lock"
 import Quickshell
+import QtQuick
 
 ShellRoot {
-    Background {}
+    property bool bgReady: false
+
+    Loader {
+        active: bgReady
+        sourceComponent: Background {}
+    }
+
+    Timer {
+        interval: 0
+        running: true
+        onTriggered: bgReady = true
+    }
+
     Drawers {}
     AreaPicker {}
     Lock {
@@ -19,6 +32,7 @@ ShellRoot {
 
     Shortcuts {}
     BatteryMonitor {}
+    MemoryMonitor {}
     IdleMonitors {
         lock: lock
     }

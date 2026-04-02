@@ -59,6 +59,8 @@ Item {
             }
         },
         Transition {
+            id: closingTransition
+
             from: "visible"
             to: ""
 
@@ -119,7 +121,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
 
-        Component.onCompleted: active = Qt.binding(() => root.shouldBeActive || root.visible)
+        Component.onCompleted: active = Qt.binding(() => root.shouldBeActive || closingTransition.running)
 
         sourceComponent: Content {
             monitor: root.monitor

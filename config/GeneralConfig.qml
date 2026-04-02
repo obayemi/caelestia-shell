@@ -5,6 +5,7 @@ JsonObject {
     property Apps apps: Apps {}
     property Idle idle: Idle {}
     property Battery battery: Battery {}
+    property Memory memory: Memory {}
 
     component Apps: JsonObject {
         property list<string> terminal: ["foot"]
@@ -29,6 +30,32 @@ JsonObject {
             {
                 timeout: 600,
                 idleAction: ["systemctl", "suspend-then-hibernate"]
+            }
+        ]
+    }
+
+    component Memory: JsonObject {
+        property int reminderInterval: 5
+        property list<var> warnLevels: [
+            {
+                level: 60,
+                title: qsTr("Memory usage elevated"),
+                message: qsTr("Memory usage is above 60%"),
+                icon: "memory"
+            },
+            {
+                level: 80,
+                title: qsTr("Memory usage high"),
+                message: qsTr("Memory usage is above 80%"),
+                icon: "memory",
+                critical: false
+            },
+            {
+                level: 90,
+                title: qsTr("Critical memory usage"),
+                message: qsTr("Memory usage is above 90%! Close some applications"),
+                icon: "memory",
+                critical: true
             }
         ]
     }

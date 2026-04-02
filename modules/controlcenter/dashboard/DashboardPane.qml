@@ -22,15 +22,16 @@ Item {
     // General Settings
     property bool enabled: Config.dashboard.enabled ?? true
     property bool showOnHover: Config.dashboard.showOnHover ?? true
-    property int updateInterval: Config.dashboard.updateInterval ?? 1000
+    property int resourceUpdateInterval: Config.dashboard.resourceUpdateInterval ?? 1000
     property int dragThreshold: Config.dashboard.dragThreshold ?? 50
-    
+
     // Performance Resources
+    property string temperatureUnit: Config.services.temperatureUnit ?? "celsius"
     property bool showBattery: Config.dashboard.performance.showBattery ?? false
     property bool showGpu: Config.dashboard.performance.showGpu ?? true
     property bool showCpu: Config.dashboard.performance.showCpu ?? true
     property bool showMemory: Config.dashboard.performance.showMemory ?? true
-    property bool showStorage: Config.dashboard.performance.showStorage ?? true 
+    property bool showStorage: Config.dashboard.performance.showStorage ?? true
     property bool showNetwork: Config.dashboard.performance.showNetwork ?? true
 
     anchors.fill: parent
@@ -38,8 +39,9 @@ Item {
     function saveConfig() {
         Config.dashboard.enabled = root.enabled;
         Config.dashboard.showOnHover = root.showOnHover;
-        Config.dashboard.updateInterval = root.updateInterval;
+        Config.dashboard.resourceUpdateInterval = root.resourceUpdateInterval;
         Config.dashboard.dragThreshold = root.dragThreshold;
+        Config.services.temperatureUnit = root.temperatureUnit;
         Config.dashboard.performance.showBattery = root.showBattery;
         Config.dashboard.performance.showGpu = root.showGpu;
         Config.dashboard.performance.showCpu = root.showCpu;

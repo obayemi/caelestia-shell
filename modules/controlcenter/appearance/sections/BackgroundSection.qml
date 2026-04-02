@@ -36,6 +36,91 @@ CollapsibleSection {
         }
     }
 
+    SectionContainer {
+        contentSpacing: Appearance.spacing.small
+
+        StyledText {
+            text: qsTr("Wallpaper folder")
+            font.pointSize: Appearance.font.size.larger
+            font.weight: 500
+        }
+
+        StyledRect {
+            Layout.fillWidth: true
+            implicitHeight: wallpaperDirRow.implicitHeight + Appearance.padding.large * 2
+            radius: Appearance.rounding.normal
+            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+            RowLayout {
+                id: wallpaperDirRow
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: Appearance.padding.large
+                spacing: Appearance.spacing.normal
+
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: wallpaperDirField.implicitHeight + Appearance.padding.small * 2
+                    radius: Appearance.rounding.small
+                    color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+                    border.width: 1
+                    border.color: Colours.palette.m3outline
+
+                    StyledTextField {
+                        id: wallpaperDirField
+                        anchors.fill: parent
+                        anchors.margins: Appearance.padding.small
+                        horizontalAlignment: TextInput.AlignLeft
+                        text: rootPane.wallpaperDir
+                        onEditingFinished: {
+                            rootPane.wallpaperDir = text;
+                            rootPane.saveConfig();
+                        }
+                    }
+                }
+            }
+        }
+
+        SwitchRow {
+            label: qsTr("Random wallpaper")
+            checked: rootPane.random
+            onToggled: checked => {
+                rootPane.random = checked;
+                rootPane.saveConfig();
+            }
+        }
+
+        SwitchRow {
+            label: qsTr("Random per screen")
+            checked: rootPane.randomPerScreen
+            onToggled: checked => {
+                rootPane.randomPerScreen = checked;
+                rootPane.saveConfig();
+            }
+        }
+
+        RowLayout {
+            visible: Config.background.randomPool.length > 0
+            spacing: Appearance.spacing.normal
+
+            StyledText {
+                Layout.fillWidth: true
+                text: qsTr("Random pool (%1 selected)").arg(Config.background.randomPool.length)
+                font.pointSize: Appearance.font.size.normal
+                color: Colours.palette.m3onSurfaceVariant
+            }
+
+            TextButton {
+                text: qsTr("Clear")
+                onClicked: {
+                    Config.background.randomPool = [];
+                    Config.save();
+                }
+            }
+        }
+    }
+
     StyledText {
         Layout.topMargin: Appearance.spacing.normal
         text: qsTr("Desktop Clock")

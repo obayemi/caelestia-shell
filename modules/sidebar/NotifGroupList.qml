@@ -113,6 +113,21 @@ Item {
             drag.target: this
             drag.axis: Drag.XAxis
 
+            onEntered: {
+                if (Config.notifs.expandOnHover)
+                    root.requestToggleExpand(true);
+            }
+            onExited: {
+                if (Config.notifs.expandOnHover && !pressed)
+                    root.requestToggleExpand(false);
+            }
+            onClicked: event => {
+                if (event.button === Qt.LeftButton && Config.notifs.focusOnClick) {
+                    const cls = modelData.desktopEntry || modelData.appName;
+                    Hypr.dispatch(`focuswindow class:(?i)${cls}`);
+                    root.visibilities.sidebar = false;
+                }
+            }
             onPressed: event => {
                 startY = event.y;
                 if (event.button === Qt.RightButton)

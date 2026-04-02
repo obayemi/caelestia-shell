@@ -37,6 +37,7 @@ GridView {
         height: root.cellHeight
 
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
+        readonly property bool isInPool: modelData && Config.background.randomPool.includes(modelData.path)
         readonly property real itemMargin: Appearance.spacing.normal / 2
         readonly property real itemRadius: Appearance.rounding.normal
 
@@ -196,6 +197,47 @@ GridView {
                 text: "check_circle"
                 color: Colours.palette.m3primary
                 font.pointSize: Appearance.font.size.large
+            }
+
+            MaterialIcon {
+                id: poolIcon
+
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.margins: Appearance.padding.small
+
+                text: isInPool ? "bookmark" : "bookmark_border"
+                color: isInPool ? Colours.palette.m3tertiary : Colours.palette.m3onSurfaceVariant
+                font.pointSize: Appearance.font.size.large
+                opacity: isInPool ? 1 : poolMouseArea.containsMouse ? 0.7 : 0
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutQuad
+                    }
+                }
+
+                MouseArea {
+                    id: poolMouseArea
+
+                    anchors.fill: parent
+                    anchors.margins: -Appearance.padding.small
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: {
+                        const pool = [...Config.background.randomPool];
+                        const idx = pool.indexOf(modelData.path);
+                        if (idx !== -1) {
+                            pool.splice(idx, 1);
+                        } else {
+                            pool.push(modelData.path);
+                        }
+                        Config.background.randomPool = pool;
+                        Config.save();
+                    }
+                }
             }
         }
 

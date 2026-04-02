@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
+import qs.components.images
 import qs.services
 import qs.config
 import Quickshell.Wayland
@@ -14,6 +15,27 @@ WlSessionLockSurface {
     required property Pam pam
 
     readonly property alias unlocking: unlockAnim.running
+
+    readonly property bool leftColumnVisible: Config.lock.showWeather || Config.lock.showFetch || Config.lock.showMedia
+    readonly property bool rightColumnVisible: Config.lock.showResources || Config.lock.showNotifications
+    readonly property int visibleSideColumns: (leftColumnVisible ? 1 : 0) + (rightColumnVisible ? 1 : 0)
+
+    readonly property real baseHeight: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult
+    readonly property real fullWidth: baseHeight * Config.lock.sizes.ratio
+    readonly property real centerScale: Math.min(1, (root.screen?.height ?? 1440) / 1440)
+    readonly property real centerContentWidth: Config.lock.sizes.centerWidth * centerScale
+    readonly property real columnSpacing: Appearance.spacing.large * 2
+    readonly property real contentPadding: Appearance.padding.large * 2
+
+    readonly property real targetWidth: {
+        if (visibleSideColumns === 2)
+            return fullWidth;
+        const fullContent = fullWidth - contentPadding;
+        const singleColWidth = (fullContent - centerContentWidth - 2 * columnSpacing) / 2;
+        if (visibleSideColumns === 1)
+            return centerContentWidth + singleColWidth + columnSpacing + contentPadding;
+        return centerContentWidth + contentPadding;
+    }
 
     color: "transparent"
 
@@ -144,14 +166,14 @@ WlSessionLockSurface {
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
-                    to: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult * Config.lock.sizes.ratio
+                    to: root.targetWidth
                     duration: Appearance.anim.durations.expressiveDefaultSpatial
                     easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
-                    to: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult
+                    to: root.baseHeight
                     duration: Appearance.anim.durations.expressiveDefaultSpatial
                     easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
@@ -159,20 +181,31 @@ WlSessionLockSurface {
         }
     }
 
-    ScreencopyView {
+    Item {
         id: background
 
         anchors.fill: parent
-        captureSource: root.screen
         opacity: 0
 
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            autoPaddingEnabled: false
-            blurEnabled: true
-            blur: 1
-            blurMax: 64
-            blurMultiplier: 1
+        ScreencopyView {
+            anchors.fill: parent
+            captureSource: root.screen
+            visible: Config.lock.backgroundMode !== "wallpaper"
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: false
+                blurEnabled: true
+                blur: 1
+                blurMax: 64
+                blurMultiplier: 1
+            }
+        }
+
+        CachingImage {
+            anchors.fill: parent
+            path: Wallpapers.perScreenPaths[root.screen?.name] || Wallpapers.actualCurrent
+            visible: Config.lock.backgroundMode === "wallpaper"
         }
     }
 
@@ -219,8 +252,8 @@ WlSessionLockSurface {
             id: content
 
             anchors.centerIn: parent
-            width: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult * Config.lock.sizes.ratio - Appearance.padding.large * 2
-            height: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult - Appearance.padding.large * 2
+            width: root.targetWidth - Appearance.padding.large * 2
+            height: root.baseHeight - Appearance.padding.large * 2
 
             lock: root
             opacity: 0

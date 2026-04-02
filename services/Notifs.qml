@@ -46,6 +46,7 @@ Singleton {
                     body: n.body,
                     appIcon: n.appIcon,
                     appName: n.appName,
+                    desktopEntry: n.desktopEntry,
                     image: n.image,
                     expireTimeout: n.expireTimeout,
                     urgency: n.urgency,
@@ -169,6 +170,7 @@ Singleton {
         property string body
         property string appIcon
         property string appName
+        property string desktopEntry
         property string image
         property real expireTimeout: Config.notifs.defaultExpireTimeout
         property int urgency: NotificationUrgency.Normal
@@ -256,6 +258,10 @@ Singleton {
                 notif.appName = notif.notification.appName;
             }
 
+            function onDesktopEntryChanged(): void {
+                notif.desktopEntry = notif.notification.desktopEntry;
+            }
+
             function onImageChanged(): void {
                 notif.image = notif.notification.image;
                 if (notif.notification?.image)
@@ -315,6 +321,7 @@ Singleton {
             body = notification.body;
             appIcon = notification.appIcon;
             appName = notification.appName;
+            desktopEntry = notification.desktopEntry;
             image = notification.image;
             if (notification?.image)
                 dummyImageLoader.active = true;

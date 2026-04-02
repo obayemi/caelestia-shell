@@ -67,12 +67,15 @@ JsonObject {
 
     component Workspaces: JsonObject {
         property int shown: 5
+        property bool dynamic: true // Show all existing workspaces instead of fixed count
+        property bool showId: true // Show workspace number instead of icon
+        property bool perMonitorWorkspaces: true // Show only workspaces for the current monitor
         property bool activeIndicator: true
         property bool occupiedBg: false
         property bool showWindows: true
         property bool showWindowsOnSpecialWorkspaces: showWindows
         property bool activeTrail: false
-        property bool perMonitorWorkspaces: true
+
         property string label: "  " // if empty, will show workspace name's first letter
         property string occupiedLabel: "󰮯"
         property string activeLabel: "󰮯"
@@ -93,6 +96,8 @@ JsonObject {
     }
 
     component Status: JsonObject {
+        property bool showCpu: false
+        property bool showMemory: false
         property bool showAudio: false
         property bool showMicrophone: false
         property bool showKbLayout: false

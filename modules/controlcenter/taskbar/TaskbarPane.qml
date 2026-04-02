@@ -23,6 +23,8 @@ Item {
     property bool persistent: Config.bar.persistent ?? true
     property bool showOnHover: Config.bar.showOnHover ?? true
     property int dragThreshold: Config.bar.dragThreshold ?? 20
+    property bool showCpu: Config.bar.status.showCpu ?? false
+    property bool showMemory: Config.bar.status.showMemory ?? false
     property bool showAudio: Config.bar.status.showAudio ?? true
     property bool showMicrophone: Config.bar.status.showMicrophone ?? true
     property bool showKbLayout: Config.bar.status.showKbLayout ?? false
@@ -35,6 +37,8 @@ Item {
     property bool trayCompact: Config.bar.tray.compact ?? false
     property bool trayRecolour: Config.bar.tray.recolour ?? false
     property int workspacesShown: Config.bar.workspaces.shown ?? 5
+    property bool workspacesDynamic: Config.bar.workspaces.dynamic ?? true
+    property bool workspacesShowId: Config.bar.workspaces.showId ?? true
     property bool workspacesActiveIndicator: Config.bar.workspaces.activeIndicator ?? true
     property bool workspacesOccupiedBg: Config.bar.workspaces.occupiedBg ?? false
     property bool workspacesShowWindows: Config.bar.workspaces.showWindows ?? false
@@ -66,6 +70,8 @@ Item {
         Config.bar.persistent = root.persistent;
         Config.bar.showOnHover = root.showOnHover;
         Config.bar.dragThreshold = root.dragThreshold;
+        Config.bar.status.showCpu = root.showCpu;
+        Config.bar.status.showMemory = root.showMemory;
         Config.bar.status.showAudio = root.showAudio;
         Config.bar.status.showMicrophone = root.showMicrophone;
         Config.bar.status.showKbLayout = root.showKbLayout;
@@ -78,6 +84,8 @@ Item {
         Config.bar.tray.compact = root.trayCompact;
         Config.bar.tray.recolour = root.trayRecolour;
         Config.bar.workspaces.shown = root.workspacesShown;
+        Config.bar.workspaces.dynamic = root.workspacesDynamic;
+        Config.bar.workspaces.showId = root.workspacesShowId;
         Config.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
         Config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
         Config.bar.workspaces.showWindows = root.workspacesShowWindows;
@@ -180,6 +188,22 @@ Item {
                         rootItem: root
 
                         options: [
+                            {
+                                label: qsTr("CPU"),
+                                propertyName: "showCpu",
+                                onToggled: function (checked) {
+                                    root.showCpu = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Memory"),
+                                propertyName: "showMemory",
+                                onToggled: function (checked) {
+                                    root.showMemory = checked;
+                                    root.saveConfig();
+                                }
+                            },
                             {
                                 label: qsTr("Speakers"),
                                 propertyName: "showAudio",
@@ -297,6 +321,72 @@ Item {
                                         value: root.workspacesShown
                                         onValueModified: value => {
                                             root.workspacesShown = value;
+                                            root.saveConfig();
+                                        }
+                                    }
+                                }
+                            }
+
+                            StyledRect {
+                                Layout.fillWidth: true
+                                implicitHeight: workspacesDynamicRow.implicitHeight + Appearance.padding.large * 2
+                                radius: Appearance.rounding.normal
+                                color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                                Behavior on implicitHeight {
+                                    Anim {}
+                                }
+
+                                RowLayout {
+                                    id: workspacesDynamicRow
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.large
+                                    spacing: Appearance.spacing.normal
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        text: qsTr("Dynamic")
+                                    }
+
+                                    StyledSwitch {
+                                        checked: root.workspacesDynamic
+                                        onToggled: {
+                                            root.workspacesDynamic = checked;
+                                            root.saveConfig();
+                                        }
+                                    }
+                                }
+                            }
+
+                            StyledRect {
+                                Layout.fillWidth: true
+                                implicitHeight: workspacesShowIdRow.implicitHeight + Appearance.padding.large * 2
+                                radius: Appearance.rounding.normal
+                                color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                                Behavior on implicitHeight {
+                                    Anim {}
+                                }
+
+                                RowLayout {
+                                    id: workspacesShowIdRow
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.large
+                                    spacing: Appearance.spacing.normal
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        text: qsTr("Show ID")
+                                    }
+
+                                    StyledSwitch {
+                                        checked: root.workspacesShowId
+                                        onToggled: {
+                                            root.workspacesShowId = checked;
                                             root.saveConfig();
                                         }
                                     }

@@ -19,9 +19,147 @@ Searcher {
     property string actualCurrent
     property bool previewColourLock
 
+    // Per-screen wallpaper support for random per-screen mode
+    property var perScreenPaths: ({})
+
+    // Per-screen color analysis
+    property var perScreenLuminance: ({})
+    property var perScreenDominant: ({})
+
+    function luminanceFor(screenName: string): real {
+        return perScreenLuminance[screenName] ?? Colours.wallLuminance;
+    }
+
+    function dominantFor(screenName: string): color {
+        return perScreenDominant[screenName] ?? Colours.palette.m3primary;
+    }
+
+    function setScreenAnalysis(screenName: string, luminance: real, dominant: color): void {
+        const lum = Object.assign({}, perScreenLuminance);
+        lum[screenName] = luminance;
+        perScreenLuminance = lum;
+        const dom = Object.assign({}, perScreenDominant);
+        dom[screenName] = dominant;
+        perScreenDominant = dom;
+    }
+
+    // Startup randomize state
+    property bool startupDone: false
+    property bool skipNextFileLoad: false
+
+    // Track known screens for hot-plug detection
+    property var knownScreens: new Set()
+
+    function tryStartupRandomize(): void {
+        if (!startupDone && Config.background.random && wallpapers.entries.length > 0) {
+            startupDone = true;
+            // Snapshot current screens so hot-plug doesn't re-randomize them
+            const screens = new Set();
+            for (const screen of Quickshell.screens)
+                screens.add(screen.name);
+            knownScreens = screens;
+            randomize();
+        }
+    }
+
+    function handleScreensChanged(): void {
+        if (!startupDone || wallpapers.entries.length === 0)
+            return;
+
+        const currentNames = new Set();
+        for (const screen of Quickshell.screens)
+            currentNames.add(screen.name);
+
+        // Handle new screens
+        if (Config.background.random && Config.background.randomPerScreen) {
+            for (const name of currentNames) {
+                if (!knownScreens.has(name))
+                    randomizeForScreen(name);
+            }
+        }
+
+        // Clean up removed screens
+        for (const name of knownScreens) {
+            if (!currentNames.has(name))
+                cleanupScreen(name);
+        }
+
+        knownScreens = currentNames;
+    }
+
+    function randomizeForScreen(screenName: string): void {
+        const allWallpapers = wallpapers.entries;
+        if (allWallpapers.length === 0)
+            return;
+
+        const pool = Config.background.randomPool;
+        let candidates = allWallpapers;
+        if (pool.length > 0) {
+            const poolSet = new Set(pool);
+            const filtered = allWallpapers.filter(w => poolSet.has(w.path));
+            if (filtered.length > 0)
+                candidates = filtered;
+        }
+
+        const idx = Math.floor(Math.random() * candidates.length);
+        const newPaths = Object.assign({}, perScreenPaths);
+        newPaths[screenName] = candidates[idx].path;
+        perScreenPaths = newPaths;
+    }
+
+    function cleanupScreen(screenName: string): void {
+        const paths = Object.assign({}, perScreenPaths);
+        delete paths[screenName];
+        perScreenPaths = paths;
+
+        const lum = Object.assign({}, perScreenLuminance);
+        delete lum[screenName];
+        perScreenLuminance = lum;
+
+        const dom = Object.assign({}, perScreenDominant);
+        delete dom[screenName];
+        perScreenDominant = dom;
+    }
+
+    function wallpaperFor(screenName: string): string {
+        if (showPreview)
+            return previewPath;
+        return perScreenPaths[screenName] || actualCurrent;
+    }
+
     function setWallpaper(path: string): void {
+        perScreenPaths = ({});
         actualCurrent = path;
         Quickshell.execDetached(["caelestia", "wallpaper", "-f", path, ...smartArg]);
+    }
+
+    function randomize(): void {
+        const allWallpapers = wallpapers.entries;
+        if (allWallpapers.length === 0)
+            return;
+
+        const pool = Config.background.randomPool;
+        let candidates = allWallpapers;
+        if (pool.length > 0) {
+            const poolSet = new Set(pool);
+            const filtered = allWallpapers.filter(w => poolSet.has(w.path));
+            if (filtered.length > 0)
+                candidates = filtered;
+        }
+
+        if (Config.background.randomPerScreen) {
+            const newPaths = {};
+            for (const screen of Quickshell.screens) {
+                const idx = Math.floor(Math.random() * candidates.length);
+                newPaths[screen.name] = candidates[idx].path;
+            }
+            perScreenPaths = newPaths;
+        } else {
+            const idx = Math.floor(Math.random() * candidates.length);
+            perScreenPaths = ({});
+            skipNextFileLoad = true;
+            setWallpaper(candidates[idx].path);
+        }
     }
 
     function preview(path: string): void {
@@ -59,6 +197,42 @@ Searcher {
         function list(): string {
             return root.list.map(w => w.path).join("\n");
         }
+
+        function randomize(): string {
+            root.randomize();
+            return "OK";
+        }
+
+        function getPool(): string {
+            return Config.background.randomPool.join("\n");
+        }
+
+        function addToPool(path: string): string {
+            const pool = [...Config.background.randomPool];
+            if (!pool.includes(path)) {
+                pool.push(path);
+                Config.background.randomPool = pool;
+                Config.save();
+            }
+            return "OK";
+        }
+
+        function removeFromPool(path: string): string {
+            const pool = [...Config.background.randomPool];
+            const idx = pool.indexOf(path);
+            if (idx !== -1) {
+                pool.splice(idx, 1);
+                Config.background.randomPool = pool;
+                Config.save();
+            }
+            return "OK";
+        }
+
+        function clearPool(): string {
+            Config.background.randomPool = [];
+            Config.save();
+            return "OK";
+        }
     }
 
     FileView {
@@ -66,17 +240,38 @@ Searcher {
         watchChanges: true
         onFileChanged: reload()
         onLoaded: {
+            if (root.skipNextFileLoad) {
+                root.skipNextFileLoad = false;
+                root.previewColourLock = false;
+                return;
+            }
             root.actualCurrent = text().trim();
             root.previewColourLock = false;
         }
+    }
+
+    property bool _scanReady: false
+
+    Timer {
+        interval: 0
+        running: true
+        onTriggered: root._scanReady = true
     }
 
     FileSystemModel {
         id: wallpapers
 
         recursive: true
-        path: Paths.wallsdir
+        path: root._scanReady ? Paths.wallsdir : ""
         filter: FileSystemModel.Images
+        onEntriesChanged: root.tryStartupRandomize()
+    }
+
+    Connections {
+        target: Quickshell
+        function onScreensChanged() {
+            root.handleScreensChanged();
+        }
     }
 
     Process {
